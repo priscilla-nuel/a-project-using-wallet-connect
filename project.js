@@ -1,53 +1,92 @@
-// Select buttons from the HTML
+// Button references
 const connectWallet = document.getElementById("connectWallet");
 const fundWallet = document.getElementById("fundWallet");
+const signMessage = document.getElementById("signMessage");
+const getBalance = document.getElementById("getBalance");
+const disconnectWallet = document.getElementById("disconnectWallet");
+const walletInfo = document.getElementById("walletInfo");
 
-// Function to connect wallet and request signature
+let connectedAccount = null; // Store connected address
+
+// Connect wallet
 async function connect() {
   if (typeof window.ethereum !== "undefined") {
-    console.log("✅ MetaMask detected!");
-
     try {
-      // Request wallet connection
       const accounts = await window.ethereum.request({ method: "eth_requestAccounts" });
-      const account = accounts[0];
-      console.log("Connected wallet:", account);
-
-      // Request user to sign a message for verification
-      const message = `Welcome! Please sign this message to verify you own this wallet.\n\nWallet: ${account}`;
-      const signature = await window.ethereum.request({
-        method: "personal_sign",
-        params: [message, account],
-      });
-
-      console.log("🖊️ Signature:", signature);
-
-      // Display connected wallet on the button
-      connectWallet.innerHTML = `✅ Connected: ${account.slice(0, 6)}...${account.slice(-4)}`;
-
-      // Optionally send to backend for verification
-      // await fetch("/api/verify", { method: "POST", body: JSON.stringify({ account, signature }) });
-
-    } catch (error) {
-      console.error("❌ Connection or signing failed:", error);
-      connectWallet.innerHTML = "❌ Connection failed!";
+      connectedAccount = accounts[0];
+      console.log("✅ Connected:", connectedAccount);
+      walletInfo.textContent = `✅ Connected: ${connectedAccount}`;
+      connectWallet.innerHTML = `Connected: ${connectedAccount.slice(0, 6)}...${connectedAccount.slice(-4)}`;
+    } catch (err) {
+      console.error("❌ Connection failed:", err);
+      walletInfo.textContent = "❌ Connection failed.";
     }
-
   } else {
-    connectWallet.innerHTML = "Please install MetaMask!";
+    walletInfo.textContent = "Please install MetaMask!";
   }
 }
 
-// Example "fund wallet" function (placeholder)
-async function yes() {
-  if (typeof window.ethereum !== "undefined") {
-    console.log("💰 Funding wallet... (placeholder)");
-    fundWallet.innerHTML = "Funding wallet...";
-  } else {
-    fundWallet.innerHTML = "Please install MetaMask!";
+// Fund wallet (placeholder)
+async function fund() {
+  if (!connectedAccount) {
+    walletInfo.textContent = "Connect your wallet first!";
+    return;
+  }
+  console.log("💰 Funding wallet...");
+  walletInfo.textContent = "💰 Funding wallet... (placeholder)";
+  // You could later integrate sending ETH or tokens here
+}
+
+// Sign message
+async function sign() {
+  if (!connectedAccount) {
+    walletInfo.textContent = "Connect your wallet first!";
+    return;
+  }
+  const message = "This is a test message to sign and verify wallet ownership.";
+  try {
+    const signature = await window.ethereum.request({
+      method: "personal_sign",
+      params: [message, connectedAccount],
+    });
+    console.log("🖊️ Signature:", signature);
+    walletInfo.textContent = "🖊️ Message signed successfully!";
+  } catch (err) {
+    console.error("❌ Signing failed:", err);
+    walletInfo.textContent = "❌ Signing failed.";
   }
 }
 
-// Attach click handlers
+// Get balance
+async function getBalanceFunc() {
+  if (!connectedAccount) {
+    walletInfo.textContent = "Connect your wallet first!";
+    return;
+  }
+  try {
+    const balanceHex = await window.ethereum.request({
+      method: "eth_getBalance",
+      params: [connectedAccount, "latest"],
+    });
+    const balance = parseInt(balanceHex, 16) / 1e18;
+    console.log("💵 Balance:", balance, "ETH");
+    walletInfo.textContent = `💵 Balance: ${balance.toFixed(4)} ETH`;
+  } catch (err) {
+    console.error("❌ Could not fetch balance:", err);
+    walletInfo.textContent = "❌ Could not fetch balance.";
+  }
+}
+
+// Disconnect wallet
+function disconnect() {
+  connectedAccount = null;
+  walletInfo.textContent = "🔌 Wallet disconnected.";
+  connectWallet.innerHTML = "Connect Wallet";
+}
+
+// Attach events
 connectWallet.onclick = connect;
-fundWallet.onclick = yes;
+fundWallet.onclick = fund;
+signMessage.onclick = sign;
+getBalance.onclick = getBalanceFunc;
+disconnectWallet.onclick = disconnect;

@@ -3,22 +3,69 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Project Using WalletConnect</title>
+  <title>Wallet Project</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #0e0e0e;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    h1 {
+      color: #00ffc3;
+      margin-bottom: 30px;
+    }
+
+    .button-container {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      width: 250px;
+    }
+
+    button {
+      padding: 12px;
+      border: none;
+      border-radius: 10px;
+      background-color: #00ffc3;
+      color: #000;
+      font-weight: bold;
+      font-size: 16px;
+      cursor: pointer;
+      transition: 0.2s ease;
+    }
+
+    button:hover {
+      background-color: #00b38f;
+      transform: scale(1.03);
+    }
+
+    p {
+      margin-top: 25px;
+      font-size: 14px;
+      color: #ccc;
+    }
+  </style>
 </head>
 <body>
-  <h2>This button will connect your wallet</h2>
-  <button id="connectWallet">Connect Wallet</button>
+  <h1>Web3 Wallet Project</h1>
 
-  <br><br>
+  <div class="button-container">
+    <button id="connectWallet">Connect Wallet</button>
+    <button id="fundWallet">Fund Wallet</button>
+    <button id="signMessage">Sign Message</button>
+    <button id="getBalance">Get Balance</button>
+    <button id="disconnectWallet">Disconnect Wallet</button>
+  </div>
 
-  <h2>This button will fund your wallet</h2>
-  <button id="fundWallet">Fund Wallet</button>
+  <p id="walletInfo">Wallet not connected.</p>
 
-  <!-- ✅ Load your project.js file -->
   <script src="./project.js"></script>
-
-  const connectWallet = document.getElementById("connectWallet"); // ✅ only once
-
-
 </body>
 </html>
